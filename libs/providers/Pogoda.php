@@ -1,6 +1,6 @@
 <?php
 
-require_once '/libs/providers/WeatherProvider.php';
+require_once $sRootPath.'/libs/providers/WeatherProvider.php';
 
 class Pogoda extends WeatherProvider
 {
@@ -30,8 +30,9 @@ class Pogoda extends WeatherProvider
             }
             
             //Иначе предыдущий элемент это <b></b> - заголовок периода суток (ночь, утро, день, вечер)
-            $sPeriodLabel = preg_replace('/[^\w]/', '', $oPrevElement->find('u')->html());
-            $sPeriodLabel = mb_convert_encoding($sPeriodLabel, 'utf-8', 'windows-1251');
+            $sPeriodLabel = mb_convert_encoding($oPrevElement->find('u')->html(), 'utf-8', 'windows-1251');
+            $aStrangeSpace = mb_substr($sPeriodLabel, 0, 1);
+            $sPeriodLabel = str_replace($aStrangeSpace, '', $sPeriodLabel);
             $iPeriodIndex = array_search($sPeriodLabel, self::$aDayPeriods);
             
             //то есть это элементы <p></p>

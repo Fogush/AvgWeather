@@ -1,5 +1,8 @@
 <?php
 
+require_once $sRootPath.'/libs/PhpMailer/PhpMailer.php';
+require_once $sRootPath.'/libs/PhpMailer/Smtp.php';
+
 class Utils
 {
     private static $aDays = array(
@@ -97,6 +100,39 @@ class Utils
         ini_set('display_startup_errors', 0);
         error_reporting(0);
     }
+    
+    public static function sendEmail($aEmailData = array())
+    {
+        $oMail = new PHPMailer();
+        $oMail->IsSMTP();                     // send via SMTP
+//         $oMail->SMTPAuth = true;              // turn on SMTP authentication
+        $oMail->Host     = 'localhost';        // SMTP server
+        $oMail->Port     = 25;        // SMTP server Port
+//         $oMail->Username = $smtp_username;    // SMTP username
+//         $oMail->Password = $smtp_password;    // SMTP password
+        
+        $oMail->From     = 'avgweather@iit-poit.net';
+        $oMail->FromName = 'AvgWeather';
+        
+        $oMail->AddAddress($aEmailData['to']);
+        
+        $oMail->Subject  =  $aEmailData['subject'];
+        $oMail->Body     =  $aEmailData['body'];
+        
+        if(!$oMail->Send())
+        {
+            // SMTP Send Failed, so try regular mail()
+            $oMail->IsMail();
+            if(!$oMail->Send())
+            {
+                //echo "Failed";
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
 }
 
 function deb()

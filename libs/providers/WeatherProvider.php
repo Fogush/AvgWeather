@@ -92,7 +92,7 @@ abstract class WeatherProvider
         }
     }
     
-    public function getIsRain()
+    public function getRain()
     {
         $aWeatherData = $this->getWeatherData();
     

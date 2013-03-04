@@ -1,6 +1,6 @@
 <?php
 
-require_once '/libs/providers/WeatherProvider.php';
+require_once $sRootPath.'/libs/providers/WeatherProvider.php';
 
 class Yandex extends WeatherProvider
 {

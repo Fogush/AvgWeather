@@ -9,13 +9,13 @@ date_default_timezone_set("Europe/Minsk");
 $sRootPath = dirname(__FILE__);
 set_include_path(get_include_path() . PATH_SEPARATOR . $sRootPath);
 
-require_once '/libs/Utils.php';
+require_once $sRootPath.'/libs/Utils.php';
 Utils::enableDebug();
 
-require_once '/libs/phpQuery/phpQuery/phpQuery.php';
-require_once '/libs/providers/Gismeteo.php';
-require_once '/libs/providers/Yandex.php';
-require_once '/libs/providers/Pogoda.php';
+require_once $sRootPath.'/libs/phpQuery/phpQuery/phpQuery.php';
+require_once $sRootPath.'/libs/providers/Gismeteo.php';
+require_once $sRootPath.'/libs/providers/Yandex.php';
+require_once $sRootPath.'/libs/providers/Pogoda.php';
 
 $fStartTime = microtime(true);
 
@@ -29,7 +29,9 @@ $aYandexTemperature = $oYandex->getTemperature();
 
 $oPogoda = new Pogoda($iDebug);
 $aPogodaTemperature = $oPogoda->getTemperature();
-$aPogodaIsRain = $oPogoda->getIsRain();
+$aPogodaRain = $oPogoda->getRain();
+
+$aRainPeriods = array();
 
 foreach (WeatherProvider::$aDayPeriods as $iPeriodIndex => $sPeriodLabel) {
     
@@ -42,7 +44,23 @@ foreach (WeatherProvider::$aDayPeriods as $iPeriodIndex => $sPeriodLabel) {
     $aAvgTemperature[$iPeriodIndex] += $aGismeteoTemperature[$iPeriodIndex];
     $aAvgTemperature[$iPeriodIndex] += $aYandexTemperature[$iPeriodIndex];
     $aAvgTemperature[$iPeriodIndex] += $aPogodaTemperature[$iPeriodIndex];
-    $aAvgTemperature[$iPeriodIndex] = sprintf("%.2f", $aAvgTemperature[$iPeriodIndex] / 3); 
+    $aAvgTemperature[$iPeriodIndex] = sprintf("%.2f", $aAvgTemperature[$iPeriodIndex] / 3);
+    
+    if ($aPogodaRain[$iPeriodIndex] == 1) {
+        $aRainPeriods[$iPeriodIndex] = $sPeriodLabel;
+    }
+}
+
+$bEmailError = false;
+        
+if ($aRainPeriods) {
+    $aEmailData = array();
+    $aEmailData['to'] = '375298588760@sms.mts.by';
+    $aEmailData['subject'] = mb_convert_encoding('Today will rain', 'windows-1251', 'utf-8');
+    $aEmailData['body'] = mb_convert_encoding('Day periods: '.join(', ', $aRainPeriods), 'windows-1251', 'utf-8');
+    if (!Utils::sendEmail($aEmailData)) {
+        $bEmailError = true;
+    }
 }
 
 $fEndTime = microtime(true);
@@ -74,12 +92,17 @@ $fEndTime = microtime(true);
         echo "<td>".$aGismeteoTemperature[$iPeriodIndex]."°</td>";
         echo "<td>".$aYandexTemperature[$iPeriodIndex]."°</td>";
         echo "<td>".$aPogodaTemperature[$iPeriodIndex]."°</td>";
-        echo "<td>".$aPogodaIsRain[$iPeriodIndex]."</td>";
+        echo "<td>".$aPogodaRain[$iPeriodIndex]."</td>";
         echo "<td></td>";
         echo "</tr>";
     }
     
     echo "</table><br />";
+    
+    if ($bEmailError) {
+        echo "Произошла ошибка при отправке письма!<br />";
+    }
+    
     echo "Время выполнения: ".sprintf("%.3f", $fEndTime - $fStartTime);
 ?>
 </body>
