@@ -1,0 +1,16 @@
+http://pogoda.tut.by/
+jQuery('.w_d_n_all')
+
+http://pda.pogoda.by/
+<p style="background: #E8E8FD">
+
+http://www.gismeteo.by/ajax/print/4248/short/
+
+http://pogoda.yandex.by/minsk/details
+document.getElementsByClassName('b-forecast-detailed__temp') первые 4 элемента
+
+
+http://ru.euronews.com/weather/europe/belarus/minsk/
+Может быть!
+
+http://meteo.by/print/minsk/
