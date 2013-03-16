@@ -24,8 +24,8 @@ $iDebug = Utils::inGetPost('debug');
 $oGismeteo = new Gismeteo($iDebug);
 $aGismeteoTemperature = $oGismeteo->getTemperature();
 
-$oYandex = new Yandex($iDebug);
-$aYandexTemperature = $oYandex->getTemperature();
+// $oYandex = new Yandex($iDebug);
+// $aYandexTemperature = $oYandex->getTemperature();
 
 $oPogoda = new Pogoda($iDebug);
 $aPogodaTemperature = $oPogoda->getTemperature();
@@ -42,9 +42,9 @@ foreach (WeatherProvider::$aDayPeriods as $iPeriodIndex => $sPeriodLabel) {
     
     $aAvgTemperature[$iPeriodIndex] = 0;
     $aAvgTemperature[$iPeriodIndex] += $aGismeteoTemperature[$iPeriodIndex];
-    $aAvgTemperature[$iPeriodIndex] += $aYandexTemperature[$iPeriodIndex];
+//     $aAvgTemperature[$iPeriodIndex] += $aYandexTemperature[$iPeriodIndex];
     $aAvgTemperature[$iPeriodIndex] += $aPogodaTemperature[$iPeriodIndex];
-    $aAvgTemperature[$iPeriodIndex] = sprintf("%.2f", $aAvgTemperature[$iPeriodIndex] / 3);
+    $aAvgTemperature[$iPeriodIndex] = sprintf("%.2f", $aAvgTemperature[$iPeriodIndex] / 2);
     
     if ($aPogodaRain[$iPeriodIndex] == 1) {
         $aRainPeriods[$iPeriodIndex] = $sPeriodLabel;
@@ -79,7 +79,7 @@ $fEndTime = microtime(true);
     <td><strong>Период</strong></td>
     <td><strong>Средняя</strong></td>
     <td><strong>Gismeteo</strong></td>
-    <td><strong>Yandex</strong></td>
+<!--     <td><strong>Yandex</strong></td> -->
     <td><strong>Pogoda</strong></td>
     <td><i>Дождь</i></td>
     <td><strong></strong></td>
@@ -90,7 +90,7 @@ $fEndTime = microtime(true);
         echo "<td>".WeatherProvider::getPeriodLabel($iPeriodIndex).":</td>";
         echo "<td>".$fTemperature."°</td>";
         echo "<td>".$aGismeteoTemperature[$iPeriodIndex]."°</td>";
-        echo "<td>".$aYandexTemperature[$iPeriodIndex]."°</td>";
+//         echo "<td>".$aYandexTemperature[$iPeriodIndex]."°</td>";
         echo "<td>".$aPogodaTemperature[$iPeriodIndex]."°</td>";
         echo "<td>".$aPogodaRain[$iPeriodIndex]."</td>";
         echo "<td></td>";
